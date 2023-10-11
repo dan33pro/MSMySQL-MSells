@@ -13,11 +13,11 @@ const dbconf = {
 
 
 // Connect!
-let connection;
+let pool;
 
 function handleCon() {
-    connection = mysql.createPool(dbconf);
-    connection.connect((err) => {
+    pool = mysql.createPool(dbconf);
+    pool.getConnection((err, connection) => {
         if(err) {
             console.error('[db err]', err);
             setTimeout(handleCon, 2000);
@@ -26,7 +26,7 @@ function handleCon() {
         }
     });
 
-    connection.on('error', err => {
+    pool.on('error', err => {
         console.error('[db err]', err);
         if (err.code === 'PROTOCOL_CONNECTION_LOST') {
             handleCon();
@@ -40,7 +40,7 @@ handleCon();
 
 function list(table) {
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM ${table.name}`, (err, data) => {
+        pool.query(`SELECT * FROM ${table.name}`, (err, data) => {
             if(err) return reject(err);
             resolve(data);
         });
@@ -49,7 +49,7 @@ function list(table) {
 
 function get(table, id) {
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM ${table.name} WHERE ${table.pk}=${id}`, (err, data) => {
+        pool.query(`SELECT * FROM ${table.name} WHERE ${table.pk}=${id}`, (err, data) => {
             if(err) return reject(err);
             resolve(data);
         });
@@ -58,7 +58,7 @@ function get(table, id) {
 
 function insert(table, data) {
     return new Promise((resolve, reject) => {
-        connection.query(`INSERT INTO ${table.name} SET ?`, data, (err, result) => {
+        pool.query(`INSERT INTO ${table.name} SET ?`, data, (err, result) => {
             if(err) return reject(err);
             resolve(result);
         });
@@ -67,7 +67,7 @@ function insert(table, data) {
 
 function update(table, data) {
     return new Promise((resolve, reject) => {
-        connection.query(`UPDATE ${table.name} SET ? WHERE ${table.pk}=?`, [data, data[table.pk]], (err, result) => {
+        pool.query(`UPDATE ${table.name} SET ? WHERE ${table.pk}=?`, [data, data[table.pk]], (err, result) => {
             if(err) return reject(err);
             resolve(result);
         });
@@ -89,7 +89,7 @@ function query(table, query) {
     return new Promise((resolve, reject) => {
         const key = Object.keys(query)[0];
         const value = query[key];
-        connection.query(`SELECT * FROM ${table.name} WHERE ${key}='${value}'`, (err, res) => {
+        pool.query(`SELECT * FROM ${table.name} WHERE ${key}='${value}'`, (err, res) => {
             if(err) {
                 return reject(err);
             }
@@ -107,7 +107,7 @@ function query(table, query, join) {
     }
 
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM ${table.name} ${joinQuery} WHERE ${table.name}.?`, query, (err, res) => {
+        pool.query(`SELECT * FROM ${table.name} ${joinQuery} WHERE ${table.name}.?`, query, (err, res) => {
             if(err) {
                 return reject(err);
             }
@@ -118,7 +118,7 @@ function query(table, query, join) {
 
 function remove(table, id) {
     return new Promise((resolve, reject) => {
-        connection.query(`DELETE FROM ${table.name} WHERE ${table.pk}=${id}`, (err, data) => {
+        pool.query(`DELETE FROM ${table.name} WHERE ${table.pk}=${id}`, (err, data) => {
             if(err) return reject(err);
             resolve(data);
         });
