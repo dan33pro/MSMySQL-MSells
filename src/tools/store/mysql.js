@@ -16,7 +16,7 @@ const dbconf = {
 let connection;
 
 function handleCon() {
-    connection = mysql.createConnection(dbconf);
+    connection = mysql.createPool(dbconf);
     connection.connect((err) => {
         if(err) {
             console.error('[db err]', err);
