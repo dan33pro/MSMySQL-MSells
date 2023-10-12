@@ -49,7 +49,13 @@ function list(table) {
 
 function get(table, id) {
     return new Promise((resolve, reject) => {
-        pool.query(`SELECT * FROM ${table.name} WHERE ${table.pk}=${id}`, (err, data) => {
+        let q = "";
+        if (isNaN(id)) {
+            q = `SELECT * FROM ${table.name} WHERE ${table.pk}='${id}'`;
+        } else {
+            q = `SELECT * FROM ${table.name} WHERE ${table.pk}=${id}`;
+        }
+        pool.query(q, (err, data) => {
             if(err) return reject(err);
             resolve(data);
         });
