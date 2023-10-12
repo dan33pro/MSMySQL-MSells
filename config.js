@@ -4,6 +4,10 @@ module.exports = {
     api: {
         port: process.env.API_PORT || 3000,
     },
+    msRouterAgent: {
+        host: process.env.ROUTER_AGENT_SERVICE_HOST || '',
+        port: process.env.ROUTER_AGENT_SERVICE_PORT || '',
+    },
     mysqlService: {
         host: process.env.MYSQL_SERVICE_HOST || '',
         port: process.env.MYSQL_SERVICE_PORT || '',
