@@ -124,7 +124,7 @@ function query(table, query, join) {
 
 function remove(table, id) {
     return new Promise((resolve, reject) => {
-        pool.query(`DELETE FROM ${table.name} WHERE ${table.pk}=${id}`, (err, data) => {
+        pool.query(`DELETE FROM ${table.name} WHERE ${table.pk}='${id}'`, (err, data) => {
             if(err) return reject(err);
             resolve(data);
         });
