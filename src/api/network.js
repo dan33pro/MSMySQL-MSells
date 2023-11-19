@@ -45,7 +45,7 @@ async function getCompose(req, res, next) {
         pkOne: req.params.pkOne,
         pkTwo: req.params.pkTwo,
     };
-    const datos = await store.get(tabla, req.params.idOne, req.params.idTwo);
+    const datos = await store.getCompose(tabla, req.params.idOne, req.params.idTwo);
     response.success(req, res, datos, 200);
 }
 
@@ -83,7 +83,7 @@ async function removeCompose(req, res, next) {
         pkOne: req.params.pkOne,
         pkTwo: req.params.pkTwo,
     };
-    const datos = await store.remove(tabla, req.params.idOne, req.params.idTwo);
+    const datos = await store.removeCompose(tabla, req.params.idOne, req.params.idTwo);
     response.success(req, res, datos, 200);
 }
 

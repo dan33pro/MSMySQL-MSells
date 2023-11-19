@@ -62,7 +62,7 @@ function get(table, id) {
     });
 }
 
-function get(table, idOne, idTwo) {
+function getCompose(table, idOne, idTwo) {
     return new Promise((resolve, reject) => {
         let valueOne = isNaN(idOne) ? `'${idOne}'` : `${idOne}`;
         let valueTwo = isNaN(idTwo) ? `'${idTwo}'` : `${idTwo}`;
@@ -139,7 +139,7 @@ function remove(table, id) {
     });
 }
 
-function remove(table, idOne, idTwo) {
+function removeCompose(table, idOne, idTwo) {
     return new Promise((resolve, reject) => {
         pool.query(`DELETE FROM ${table.name} WHERE ${table.pkOne}='${idOne}' AND ${table.pkTwo}='${idTwo}'`, (err, data) => {
             if(err) return reject(err);
@@ -151,7 +151,9 @@ function remove(table, idOne, idTwo) {
 module.exports = {
     list,
     get,
+    getCompose,
     upsert,
     query,
     remove,
+    removeCompose,
 };
