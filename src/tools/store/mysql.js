@@ -62,6 +62,19 @@ function get(table, id) {
     });
 }
 
+function get(table, idOne, idTwo) {
+    return new Promise((resolve, reject) => {
+        let valueOne = isNaN(idOne) ? `'${idOne}'` : `${idOne}`;
+        let valueTwo = isNaN(idTwo) ? `'${idTwo}'` : `${idTwo}`;
+
+        let q = `SELECT * FROM ${table.name} WHERE ${table.pkOne}=${valueOne} AND ${table.pkTwo}=${valueTwo}`;
+        pool.query(q, (err, data) => {
+            if(err) return reject(err);
+            resolve(data);
+        });
+    });
+}
+
 function insert(table, data) {
     return new Promise((resolve, reject) => {
         pool.query(`INSERT INTO ${table.name} SET ?`, data, (err, result) => {
@@ -80,12 +93,25 @@ function update(table, data) {
     });
 }
 
+function updateCompose(table, data) {
+    return new Promise((resolve, reject) => {
+        pool.query(`UPDATE ${table.name} SET ? WHERE ${table.pkOne}=? AND ${table.pkTwo}=?`, [data, data[table.pkOne], data[table.pkTwo]], (err, result) => {
+            if(err) return reject(err);
+            resolve(result);
+        });
+    });
+}
+
 function upsert(table, data, accion) {
     switch(accion) {
         case 'insert':
             return insert(table, data);
+        case 'insert-compose':
+            return insert(table, data);
         case 'update':
             return update(table, data);
+        case 'update-compose':
+            return updateCompose(table, data);
         default:
             throw error('No se especifica la acción en la petición', 405);
     }
@@ -104,27 +130,18 @@ function query(table, query) {
     });
 }
 
-function query(table, query, join) {
-    let joinQuery = '';
-    if(join) {
-        const key = Object.keys(join)[0];
-        const val = join[key];
-        joinQuery = `JOIN ${key} ON ${table.name}.${val} = ${key}.${table.pk}`;
-    }
-
-    return new Promise((resolve, reject) => {
-        pool.query(`SELECT * FROM ${table.name} ${joinQuery} WHERE ${table.name}.?`, query, (err, res) => {
-            if(err) {
-                return reject(err);
-            }
-            resolve(res || null);
-        });
-    })
-}
-
 function remove(table, id) {
     return new Promise((resolve, reject) => {
         pool.query(`DELETE FROM ${table.name} WHERE ${table.pk}='${id}'`, (err, data) => {
+            if(err) return reject(err);
+            resolve(data);
+        });
+    });
+}
+
+function remove(table, idOne, idTwo) {
+    return new Promise((resolve, reject) => {
+        pool.query(`DELETE FROM ${table.name} WHERE ${table.pkOne}='${idOne}' AND ${table.pkTwo}='${idTwo}'`, (err, data) => {
             if(err) return reject(err);
             resolve(data);
         });
