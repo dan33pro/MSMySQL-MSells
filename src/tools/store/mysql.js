@@ -125,7 +125,7 @@ function query(table, query) {
             if(err) {
                 return reject(err);
             }
-            resolve(res[0] || null);
+            resolve(res || null);
         });
     });
 }

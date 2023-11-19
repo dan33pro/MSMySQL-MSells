@@ -10,6 +10,9 @@ router.get('/:table', list);
 router.get('/:table/:pk/:id', get);
 router.get('/:table/:pkOne/:pkTwo/:idOne/:idTwo', getCompose);
 
+router.get('/:table/:pk/:key/:value', query);
+router.get('/query/:table/:pkOne/:pkTwo/:key/:value', queryCompose);
+
 router.post('/:table/:pk/:action', upsert);
 router.post('/:table/:pkOne/:pkTwo/:action', upsertCompose);
 
@@ -19,8 +22,6 @@ router.put('/:table/:pkOne/:pkTwo/:action', upsertCompose);
 router.delete('/:table/:pk/:id', remove);
 router.delete('/:table/:pkOne/:pkTwo/:idOne/:idTwo', removeCompose);
 
-router.get('/:table/:pk/:key/:value', query);
-router.get('/:table/:pkOne/:pkTwo/:key/:value', queryCompose);
 
 async function list(req, res, next) {
     let tabla = {
